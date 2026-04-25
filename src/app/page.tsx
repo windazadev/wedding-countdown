@@ -151,6 +151,7 @@ function CountUnit({
 
 function PushSubscribeButton() {
   const [state, setState] = useState<"idle" | "loading" | "subscribed" | "error" | "unsupported">("idle");
+  const [name, setName] = useState<"Edwin" | "Yeimy" | null>(null);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -159,8 +160,9 @@ function PushSubscribeButton() {
     }
   }, []);
 
-  const subscribe = async () => {
-    if (state !== "idle") return;
+  const subscribe = async (who: "Edwin" | "Yeimy") => {
+    if (state === "loading") return;
+    setName(who);
     setState("loading");
     try {
       const reg = await navigator.serviceWorker.ready;
@@ -172,46 +174,54 @@ function PushSubscribeButton() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sub),
+        body: JSON.stringify({ subscription: sub.toJSON(), name: who }),
       });
       if (!res.ok) throw new Error("No se pudo guardar");
       setState("subscribed");
-      setMsg("¡Listo! Recibirás un recordatorio cada mañana.");
+      setMsg(`¡Listo, ${who}! Recibirás un recordatorio cada mañana.`);
     } catch {
       setState("error");
+      setName(null);
       setMsg("Activa los permisos de notificación e intenta de nuevo.");
     }
   };
 
   if (state === "unsupported") return null;
   if (state === "subscribed") return (
-    <motion.p
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="text-center text-sm"
-      style={{ color: "var(--rose-light)" }}
-    >
+    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm"
+      style={{ color: "var(--rose-light)" }}>
       ✦ {msg}
     </motion.p>
   );
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <motion.button
-        onClick={subscribe}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.97 }}
-        disabled={state === "loading"}
-        className="rounded-full px-8 py-3 text-sm font-medium tracking-widest uppercase transition-opacity"
-        style={{
-          background: "linear-gradient(135deg, var(--rose) 0%, var(--gold) 100%)",
-          color: "#0d0d1a",
-          letterSpacing: "0.15em",
-          opacity: state === "loading" ? 0.7 : 1,
-        }}
-      >
-        {state === "loading" ? "Activando..." : "Recibir recordatorios diarios"}
-      </motion.button>
+    <div className="flex flex-col items-center gap-4">
+      <p style={{ fontSize: "0.72rem", color: "var(--muted)", letterSpacing: "0.12em" }}>
+        ¿Quién eres?
+      </p>
+      <div className="flex gap-3">
+        {(["Edwin", "Yeimy"] as const).map((who) => (
+          <motion.button
+            key={who}
+            onClick={() => subscribe(who)}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+            disabled={state === "loading"}
+            className="rounded-full px-7 py-3 text-sm font-medium tracking-widest uppercase"
+            style={{
+              background: state === "loading" && name === who
+                ? "rgba(196,154,138,0.3)"
+                : "linear-gradient(135deg, var(--rose) 0%, var(--gold) 100%)",
+              color: "#0d0d1a",
+              letterSpacing: "0.15em",
+              opacity: state === "loading" && name !== who ? 0.4 : 1,
+              transition: "opacity 0.2s",
+            }}
+          >
+            {state === "loading" && name === who ? "..." : who}
+          </motion.button>
+        ))}
+      </div>
       {state === "error" && (
         <p className="text-xs text-center" style={{ color: "var(--rose-light)", opacity: 0.8 }}>
           {msg}
