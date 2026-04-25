@@ -13,16 +13,16 @@ interface Step {
 
 const BUILD_PROGRESS: Step[] = [
   { step: "Scaffold Next.js 16 + Tailwind", status: "done", ts: "2026-04-25" },
-  { step: "Instalar dependencias (framer-motion, web-push, @vercel/blob)", status: "done", ts: "2026-04-25" },
+  { step: "Instalar dependencias (framer-motion, web-push)", status: "done", ts: "2026-04-25" },
   { step: "UI principal (countdown, milestones, quote, notif)", status: "done", ts: "2026-04-25" },
   { step: "PWA manifest + service worker", status: "done", ts: "2026-04-25" },
-  { step: "API web push (subscribe + cron)", status: "done", ts: "2026-04-25" },
-  { step: "Página /status", status: "done", ts: "2026-04-25" },
-  { step: "Vercel cron diario 8am Pereira", status: "done", ts: "2026-04-25" },
-  { step: "Crear repo GitHub (windazadev)", status: "in-progress" },
-  { step: "Deploy a Vercel", status: "pending" },
-  { step: "Crear Vercel Blob store + env vars", status: "pending" },
-  { step: "Verificar deploy y notificaciones", status: "pending" },
+  { step: "API web push (subscribe + cron diario)", status: "done", ts: "2026-04-25" },
+  { step: "Página /status con progreso en vivo", status: "done", ts: "2026-04-25" },
+  { step: "Vercel cron diario 8am hora Colombia (13:00 UTC)", status: "done", ts: "2026-04-25" },
+  { step: "Repo GitHub windazadev/wedding-countdown", status: "done", ts: "2026-04-25" },
+  { step: "Deploy a Vercel (production)", status: "done", ts: "2026-04-25", note: "wedding-countdown-psi.vercel.app" },
+  { step: "Env vars en Vercel (VAPID, CRON, STATUS)", status: "done", ts: "2026-04-25" },
+  { step: "Verificar subscribe + notificaciones push", status: "in-progress", note: "Pendiente primera suscripción" },
 ];
 
 function StatusDot({ status }: { status: Step["status"] }) {
