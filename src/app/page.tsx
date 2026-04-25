@@ -285,19 +285,19 @@ export default function Page() {
 
       <Particles />
 
-      {/* ══════ HERO — 100svh, solo nombres ══════ */}
-      <section className="relative flex flex-col items-center justify-center text-center"
+      {/* ══════ HERO — 100svh, nombres + countdown ══════ */}
+      <section className="relative flex flex-col items-center text-center"
         style={{
           zIndex: 10,
           height: "100svh",
-          padding: "clamp(1rem, 4vw, 3rem)",
-          gap: "clamp(1rem, 2.5vh, 1.8rem)",
+          padding: "clamp(1.2rem, 3.5vw, 2.5rem) clamp(1rem, 4vw, 3rem)",
+          justifyContent: "space-between",
         }}>
 
         <Ornament pos="tl" /><Ornament pos="tr" />
         <Ornament pos="bl" /><Ornament pos="br" />
 
-        {/* tagline */}
+        {/* TOP — tagline */}
         <motion.p initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9 }}
           style={{ color: "var(--rose)", fontSize: "clamp(0.5rem, 1.5vw, 0.65rem)",
@@ -305,89 +305,80 @@ export default function Page() {
           Pereira · Colombia
         </motion.p>
 
-        {/* top rule */}
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-          transition={{ duration: 1.1, delay: 0.15 }}>
-          <Rule w="clamp(60px, 13vw, 100px)" opacity={0.38} />
-        </motion.div>
+        {/* CENTER — nombres */}
+        <div className="flex flex-col items-center" style={{ gap: "clamp(0.6rem, 1.8vh, 1.2rem)" }}>
+          <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.15 }}>
+            <Rule w="clamp(60px, 13vw, 100px)" opacity={0.38} />
+          </motion.div>
 
-        {/* NAMES — tamaño original grande */}
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.25 }}
-          style={{
-            fontFamily: "var(--font-cormorant), Georgia, serif",
-            fontSize: "clamp(3.2rem, 14vw, 8rem)",
-            fontWeight: 300, lineHeight: 1.05, letterSpacing: "0.03em",
-            background: "linear-gradient(150deg, var(--gold-lt) 0%, var(--gold) 40%, var(--rose-lt) 70%, var(--gold-lt) 100%)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            animation: "shimmer 6s linear infinite",
-          }}>
-          Edwin<br />&amp; Yeimy
-        </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.25 }}
+            style={{
+              fontFamily: "var(--font-cormorant), Georgia, serif",
+              fontSize: "clamp(3.2rem, 14vw, 8rem)",
+              fontWeight: 300, lineHeight: 1.05, letterSpacing: "0.03em",
+              background: "linear-gradient(150deg, var(--gold-lt) 0%, var(--gold) 40%, var(--rose-lt) 70%, var(--gold-lt) 100%)",
+              backgroundSize: "200% auto",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              animation: "shimmer 6s linear infinite",
+            }}>
+            Edwin<br />&amp; Yeimy
+          </motion.h1>
 
-        {/* bottom rule */}
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-          transition={{ duration: 1.1, delay: 0.4 }}>
-          <Rule w="clamp(60px, 13vw, 100px)" opacity={0.38} />
-        </motion.div>
+          <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.4 }}>
+            <Rule w="clamp(60px, 13vw, 100px)" opacity={0.38} />
+          </motion.div>
 
-        {/* date */}
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 0.5 }}
-          style={{
-            fontFamily: "var(--font-cormorant), Georgia, serif",
-            color: "var(--gold-lt)", fontStyle: "italic", fontWeight: 300,
-            fontSize: "clamp(1rem, 3vw, 1.35rem)", letterSpacing: "0.12em",
-          }}>
-          9 de Mayo, 2026
-        </motion.p>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.5 }}
+            style={{
+              fontFamily: "var(--font-cormorant), Georgia, serif",
+              color: "var(--gold-lt)", fontStyle: "italic", fontWeight: 300,
+              fontSize: "clamp(1rem, 3vw, 1.35rem)", letterSpacing: "0.12em",
+            }}>
+            9 de Mayo, 2026
+          </motion.p>
+        </div>
 
-        {/* flecha al countdown */}
-        <motion.button
-          onClick={() => document.getElementById("countdown")?.scrollIntoView({ behavior: "smooth" })}
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          style={{
-            position: "absolute", bottom: "clamp(1.5rem, 4vh, 2.5rem)",
-            background: "none", border: "none", cursor: "pointer",
-            display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
-            color: "var(--gold)", opacity: 0.7,
-          }}>
-          <span style={{ fontSize: "0.52rem", letterSpacing: "0.3em", textTransform: "uppercase",
-            color: "var(--rose)" }}>ver countdown</span>
-          <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>↓</span>
-        </motion.button>
-      </section>
+        {/* BOTTOM — countdown + flecha romántica */}
+        <div className="flex flex-col items-center" style={{ gap: "clamp(0.6rem, 1.8vh, 1.2rem)" }}>
+          {mounted && (
+            <div className="flex items-center" style={{ gap: "clamp(0.8rem, 3.5vw, 2.5rem)" }}>
+              <Unit value={time.days}    label="días"     delay={0.7} />
+              <VSep delay={0.85} />
+              <Unit value={time.hours}   label="horas"    delay={0.9} />
+              <VSep delay={1.0} />
+              <Unit value={time.minutes} label="minutos"  delay={1.1} />
+              <VSep delay={1.2} />
+              <Unit value={time.seconds} label="segundos" delay={1.3} />
+            </div>
+          )}
 
-      {/* ══════ COUNTDOWN ══════ */}
-      <section id="countdown" className="relative flex flex-col items-center justify-center text-center"
-        style={{ zIndex: 10, minHeight: "60svh", padding: "clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 3rem)", gap: "clamp(1rem, 2.5vh, 1.8rem)" }}>
-        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          style={{ color: "var(--rose)", fontSize: "clamp(0.5rem, 1.5vw, 0.62rem)",
-            letterSpacing: "0.35em", textTransform: "uppercase" }}>
-          faltan
-        </motion.p>
-        {mounted && (
-          <div className="flex items-center" style={{ gap: "clamp(1rem, 4vw, 3rem)" }}>
-            <Unit value={time.days}    label="días"     delay={0.1} />
-            <VSep delay={0.2} />
-            <Unit value={time.hours}   label="horas"    delay={0.3} />
-            <VSep delay={0.4} />
-            <Unit value={time.minutes} label="minutos"  delay={0.5} />
-            <VSep delay={0.6} />
-            <Unit value={time.seconds} label="segundos" delay={0.7} />
-          </div>
-        )}
+          <motion.button
+            onClick={() => document.getElementById("milestones")?.scrollIntoView({ behavior: "smooth" })}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+            style={{ background: "none", border: "none", cursor: "pointer",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+            <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+              <span style={{ fontFamily: "var(--font-cormorant), Georgia, serif",
+                fontStyle: "italic", color: "var(--rose)", opacity: 0.75,
+                fontSize: "clamp(0.7rem, 2vw, 0.9rem)", letterSpacing: "0.15em" }}>
+                nuestra historia
+              </span>
+              <span style={{ color: "var(--gold)", fontSize: "0.9rem", opacity: 0.6 }}>↓</span>
+            </motion.div>
+          </motion.button>
+        </div>
       </section>
 
       {/* ══════ MILESTONES ══════ */}
-      <PageSection>
+      <PageSection id="milestones">
         <DiamondDivider label="nuestra historia" />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl mx-auto mt-4">
           {[
@@ -465,9 +456,9 @@ export default function Page() {
   );
 }
 
-function PageSection({ children }: { children: React.ReactNode }) {
+function PageSection({ children, id }: { children: React.ReactNode; id?: string }) {
   return (
-    <section className="relative flex flex-col items-center gap-6 px-5 py-14 text-center w-full"
+    <section id={id} className="relative flex flex-col items-center gap-6 px-5 py-14 text-center w-full"
       style={{ zIndex: 10 }}>
       {children}
     </section>
