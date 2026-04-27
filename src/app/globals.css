@@ -14,14 +14,17 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html, body { 
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   background-color: var(--bg);
   color: var(--cream);
   font-family: 'Inter', -apple-system, sans-serif;
-  min-height: 100svh;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -79,3 +82,17 @@ body {
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+.countdown-container {
+  margin-top: clamp(0.6rem, 2vh, 1.4rem);
+}
+
+@media (max-width: 640px) {
+  .countdown-container {
+    margin-top: 4vh !important;
+    gap: 2.5rem !important;
+  }
+  .main-days-block {
+    margin-bottom: 0 !important;
+  }
+}

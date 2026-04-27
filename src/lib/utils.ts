@@ -1,29 +1,57 @@
-export const WEDDING_DATE = new Date("2026-05-09T17:00:00-05:00");
+export const WEDDING_DATE = new Date("2026-05-09T00:00:00-05:00");
 export const PROPOSAL_DATE = new Date("2026-03-13T00:00:00-05:00");
 export const ANNIVERSARY_DAY = 26;
 
-export const QUOTES = [
-  "Cada día que pasa es un día más cerca de amarte para siempre.",
-  "Pereira nos vio nacer como pareja, y nos verá prometernos eternidad.",
-  "Contigo, cada segundo tiene sentido.",
-  "El 9 de mayo no es solo una fecha — es el inicio de nuestra historia más grande.",
-  "Tú eres la razón por la que creo en el amor para siempre.",
-  "En tus ojos encontré mi hogar.",
-  "Faltan pocos días y ya soy el hombre más afortunado del mundo.",
-  "Desde el 13 de marzo supe que te quería a mi lado toda la vida.",
-  "Eres mi promesa favorita.",
-  "Cada anochecer nos acerca un poco más a nuestro día.",
-  "Te elegí ayer, te elijo hoy y te elegiré el 9 de mayo y siempre.",
-  "Nuestro amor es la historia más bonita que jamás hemos vivido.",
-  "Pereira, Colombia — donde comenzó nuestro para siempre.",
-  "Seré tuyo por el resto de mi vida.",
-  "Juntos, hasta que los días ya no tengan nombre.",
-];
+export const COUNTDOWN_QUOTES: Record<number, string> = {
+  12: "El tiempo dejó de ser una medida y se convirtió en la urgencia vital de llegar a ti.",
+  11: "Eres la única coincidencia perfecta en un universo que antes me parecía lleno de caos.",
+  10: "Si el destino ya estaba escrito, tú eres la única certeza que siempre quise leer.",
+   9: "Hiciste de mis días comunes una obra de arte; a tu lado, hasta el silencio es poesía.",
+   8: "Mi hogar no tiene coordenadas físicas. Mi hogar es tu voz, tu paz y la luz inmensa de nuestra hija.",
+   7: "Antes de ti, solo sobrevivía al azar. Contigo, descubrí que la magia tiene nombre propio.",
+   6: "Eres la melodía exacta que le dio sentido y compás al ruido del mundo. Ya casi llegamos.",
+   5: "Nuestro amor no es casualidad; es la prueba más hermosa de que Dios escuchó las oraciones que ni siquiera sabíamos que estábamos haciendo.",
+   4: "Cuando Dios te puso en mi camino, no solo me entregó una compañera, me dio el milagro de entender su gracia a través de tus ojos.",
+   3: "El hilo que nos une no lo tejimos nosotros; lo trazó la mano de Dios desde antes de que el tiempo existiera.",
+   2: "Que este matrimonio sea un altar, no solo para nosotros, sino un reflejo del amor infinito que Dios ya derramó sobre nuestra familia.",
+   1: "Mañana le juramos a Dios lo que Él ya sabe: que nos creó con el propósito exacto de encontrarnos y hacernos uno solo.",
+   0: "¡Hoy es nuestro día! El amor que construimos llega a su altar. ♡",
+};
+
+// Returns calendar days remaining based on Colombia date (UTC-5, no DST).
+// Uses date comparison, not raw hours, so 8pm on May 8 correctly returns 1 (not 0).
+export function getColombiaCalendarDays(): number {
+  const nowUTC = Date.now();
+  // Shift to Colombia time then zero out the time portion to get midnight UTC of that Colombia date
+  const colombiaMidnight = new Date(nowUTC - 5 * 3_600_000);
+  colombiaMidnight.setUTCHours(0, 0, 0, 0);
+  // May 9 midnight Colombia = May 9 05:00 UTC
+  const weddingMidnightUTC = new Date("2026-05-09T05:00:00Z");
+  const days = Math.round((weddingMidnightUTC.getTime() - colombiaMidnight.getTime()) / 86_400_000);
+  return Math.max(0, days);
+}
 
 export function getDailyQuote(): string {
-  const now = new Date();
-  const index = (now.getFullYear() * 366 + now.getMonth() * 31 + now.getDate()) % QUOTES.length;
-  return QUOTES[index];
+  const days = getColombiaCalendarDays();
+  return COUNTDOWN_QUOTES[days] ?? "Cada día que pasa es un paso más hacia nuestro para siempre.";
+}
+
+export function getSentQuotes(): { day: number; date: string; quote: string }[] {
+  const currentDays = getColombiaCalendarDays();
+  const weddingMidnightUTC = new Date("2026-05-09T05:00:00Z");
+  const result: { day: number; date: string; quote: string }[] = [];
+  for (let d = 12; d >= currentDays; d--) {
+    const dateUTC = new Date(weddingMidnightUTC.getTime() - d * 86_400_000);
+    const dateStr = dateUTC.toLocaleDateString("es-CO", {
+      day: "numeric", month: "long", year: "numeric", timeZone: "America/Bogota",
+    });
+    result.push({
+      day: d,
+      date: dateStr,
+      quote: COUNTDOWN_QUOTES[d] ?? "Cada día que pasa es un paso más hacia nuestro para siempre.",
+    });
+  }
+  return result.reverse(); // más reciente primero
 }
 
 export function getTimeLeft(target: Date) {

@@ -46,13 +46,40 @@ self.addEventListener("push", (e) => {
   );
 });
 
+// Store the subscriber name so pushsubscriptionchange can refresh without a page open
+let _subscriberName = null;
+self.addEventListener("message", (e) => {
+  if (e.data?.type === "STORE_NAME") _subscriberName = e.data.name;
+});
+
+self.addEventListener("pushsubscriptionchange", (e) => {
+  e.waitUntil(
+    self.registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: e.oldSubscription?.options?.applicationServerKey,
+    }).then((newSub) => {
+      const name = _subscriberName;
+      if (!name) return;
+      return fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscription: newSub.toJSON(), name }),
+      });
+    })
+  );
+});
+
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const url = e.notification.data?.url ?? "/";
+  const target = e.notification.data?.url ?? "/";
+  const origin = self.location.origin;
   e.waitUntil(
-    clients.matchAll({ type: "window" }).then((wins) => {
-      const win = wins.find((w) => w.url === url && "focus" in w);
-      return win ? win.focus() : clients.openWindow(url);
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
+      const appWin = wins.find((w) => w.url.startsWith(origin));
+      if (appWin) {
+        return appWin.focus().then(() => appWin.navigate(target));
+      }
+      return clients.openWindow(target);
     })
   );
 });
