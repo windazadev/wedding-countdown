@@ -22,7 +22,10 @@ const BUILD_PROGRESS: Step[] = [
   { step: "Repo GitHub windazadev/wedding-countdown", status: "done", ts: "2026-04-25" },
   { step: "Deploy a Vercel (production)", status: "done", ts: "2026-04-25", note: "wedding-countdown-psi.vercel.app" },
   { step: "Env vars en Vercel (VAPID, CRON, STATUS)", status: "done", ts: "2026-04-25" },
-  { step: "Verificar subscribe + notificaciones push", status: "in-progress", note: "Pendiente primera suscripción" },
+  { step: "Migrar storage a Vercel Blob (fix Android)", status: "done", ts: "2026-04-28", note: "Suscripciones ahora en Blob, no env vars" },
+  { step: "Retry con backoff en cron push", status: "done", ts: "2026-04-28", note: "3 reintentos con backoff exponencial" },
+  { step: "Service Worker v2 (cache fix + renotify)", status: "done", ts: "2026-04-28" },
+  { step: "Verificar notificaciones Android", status: "in-progress", note: "Pendiente re-suscripción tras deploy" },
 ];
 
 function StatusDot({ status }: { status: Step["status"] }) {

@@ -20,12 +20,16 @@ export async function GET(req: NextRequest) {
 
   const sub = await getSubscription(name);
   if (!sub) {
-    return NextResponse.json({ error: `No subscription found for ${name}` }, { status: 404 });
+    return NextResponse.json(
+      { error: `No subscription found for ${name}`, storage: "blob" },
+      { status: 404 }
+    );
   }
 
   const days = getColombiaCalendarDays();
   const quote = getDailyQuote();
-  const title = days === 0 ? "¡Hoy es el día, mi amor! ♡" : `Mi amor, faltan ${days} días ♡`;
+  const title =
+    days === 0 ? "¡Hoy es el día, mi amor! ♡" : `Mi amor, faltan ${days} días ♡`;
 
   const payload = JSON.stringify({
     title,
@@ -41,16 +45,33 @@ export async function GET(req: NextRequest) {
       urgency: "high",
     });
     const endpointHost = (() => {
-      try { return new URL((sub as { endpoint: string }).endpoint).host; } catch { return null; }
+      try {
+        return new URL((sub as { endpoint: string }).endpoint).host;
+      } catch {
+        return null;
+      }
     })();
-    return NextResponse.json({ ok: true, sent_to: name, endpointHost, days, quote });
+    return NextResponse.json({
+      ok: true,
+      sent_to: name,
+      endpointHost,
+      days,
+      quote,
+      storage: "blob",
+    });
   } catch (err: unknown) {
     const e = err as { statusCode?: number; body?: string; message?: string };
-    return NextResponse.json({
-      error: "Push failed",
-      statusCode: e.statusCode,
-      detail: e.body ?? e.message,
-      hint: e.statusCode === 410 ? "Subscription expired — Yeimy needs to re-subscribe in the app" : undefined,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Push failed",
+        statusCode: e.statusCode,
+        detail: e.body ?? e.message,
+        hint:
+          e.statusCode === 410
+            ? "Subscription expired — user needs to re-subscribe in the app"
+            : undefined,
+      },
+      { status: 500 }
+    );
   }
 }

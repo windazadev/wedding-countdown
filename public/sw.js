@@ -1,4 +1,5 @@
-const CACHE = "wedding-v1";
+const CACHE_VERSION = 2;
+const CACHE = `wedding-v${CACHE_VERSION}`;
 const STATIC = ["/", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -17,6 +18,11 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+
+  // Never cache API calls or subscription endpoints
+  const url = new URL(e.request.url);
+  if (url.pathname.startsWith("/api/")) return;
+
   e.respondWith(
     fetch(e.request)
       .then((res) => {
@@ -46,6 +52,9 @@ self.addEventListener("push", (e) => {
       tag: `wedding-${Date.now()}`,
       data: { url: data.url ?? "/" },
       vibrate: [200, 100, 200],
+      // Android-specific: ensure notification is shown even in background
+      requireInteraction: false,
+      renotify: true,
     })
   );
 });
@@ -56,6 +65,7 @@ self.addEventListener("message", (e) => {
   if (e.data?.type === "STORE_NAME") _subscriberName = e.data.name;
 });
 
+// Handle subscription change (token rotation) — re-subscribe and update server
 self.addEventListener("pushsubscriptionchange", (e) => {
   e.waitUntil(
     self.registration.pushManager.subscribe({
@@ -63,12 +73,18 @@ self.addEventListener("pushsubscriptionchange", (e) => {
       applicationServerKey: e.oldSubscription?.options?.applicationServerKey,
     }).then((newSub) => {
       const name = _subscriberName;
-      if (!name) return;
+      if (!name) {
+        console.warn("[sw] pushsubscriptionchange: no stored name, cannot update server");
+        return;
+      }
+      console.log("[sw] pushsubscriptionchange: refreshing subscription for", name);
       return fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subscription: newSub.toJSON(), name }),
       });
+    }).catch((err) => {
+      console.error("[sw] pushsubscriptionchange failed:", err);
     })
   );
 });
