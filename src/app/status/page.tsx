@@ -1,6 +1,6 @@
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getTimeLeft, WEDDING_DATE } from "@/lib/utils";
+import { getAllSubscriptions } from "@/lib/subscriptions";
 
 const STATUS_TOKEN = process.env.STATUS_TOKEN ?? "EdwinYeimy0926";
 
@@ -47,6 +47,26 @@ export default async function StatusPage({
   const done = BUILD_PROGRESS.filter((s) => s.status === "done").length;
   const total = BUILD_PROGRESS.length;
   const pct = Math.round((done / total) * 100);
+
+  const allSubs = await getAllSubscriptions();
+  const knownNames = ["EDWIN", "YEIMY"];
+  const subsDiag = knownNames.map((name) => {
+    const found = allSubs.find((s) => s.name === name);
+    let host: string | null = null;
+    if (found) {
+      try { host = new URL((found.sub as { endpoint: string }).endpoint).host; } catch {}
+    }
+    const provider = host?.includes("fcm.googleapis.com")
+      ? "FCM (Android/Chrome)"
+      : host?.includes("web.push.apple.com")
+        ? "APNs (iOS/Safari)"
+        : host?.includes("mozilla.com")
+          ? "Mozilla autopush"
+          : host
+            ? "Otro"
+            : null;
+    return { name, host, provider, present: !!found };
+  });
 
   return (
     <main
@@ -129,6 +149,29 @@ export default async function StatusPage({
                     <span style={{ fontSize: "0.62rem", color: "var(--rose-light)" }}>{s.note}</span>
                   )}
                 </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Suscripciones push */}
+        <div className="card-glass rounded-2xl p-5 flex flex-col gap-3">
+          <p style={{ color: "var(--cream)", fontSize: "0.78rem", fontWeight: 500 }}>
+            Suscripciones push
+          </p>
+          <ul className="flex flex-col gap-2">
+            {subsDiag.map((s) => (
+              <li key={s.name} className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block w-2 h-2 rounded-full ${s.present ? "bg-emerald-400" : "bg-red-400"}`} />
+                  <span style={{ fontSize: "0.78rem", color: "var(--cream)" }}>{s.name}</span>
+                  {s.provider && (
+                    <span style={{ fontSize: "0.62rem", color: "var(--gold-light)" }}>· {s.provider}</span>
+                  )}
+                </div>
+                <span style={{ fontSize: "0.6rem", color: "var(--muted)", marginLeft: "1rem", wordBreak: "break-all" }}>
+                  {s.host ?? "sin suscripción"}
+                </span>
               </li>
             ))}
           </ul>

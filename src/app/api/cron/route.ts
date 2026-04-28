@@ -1,7 +1,13 @@
 import webpush from "web-push";
 import { NextRequest, NextResponse } from "next/server";
 import { getDailyQuote, getColombiaCalendarDays } from "@/lib/utils";
-import { getAllSubscriptions } from "@/lib/subscriptions";
+import { getAllSubscriptions, deleteSubscription } from "@/lib/subscriptions";
+
+const SEND_OPTIONS = {
+  TTL: 60 * 60 * 12,
+  urgency: "high" as const,
+  topic: "wedding-daily",
+};
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -34,12 +40,34 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, sent: 0, note: "No subscriptions yet" });
   }
 
-  const results = await Promise.allSettled(
-    subs.map(({ sub }) => webpush.sendNotification(sub, payload))
-  );
+  let sent = 0;
+  let failed = 0;
+  const purged: string[] = [];
+  const errors: { name: string; statusCode?: number; detail?: string }[] = [];
 
-  const sent = results.filter((r) => r.status === "fulfilled").length;
-  const failed = results.filter((r) => r.status === "rejected").length;
+  for (const { name, sub } of subs) {
+    try {
+      await webpush.sendNotification(sub, payload, SEND_OPTIONS);
+      sent++;
+    } catch (err: unknown) {
+      failed++;
+      const e = err as { statusCode?: number; body?: string; message?: string };
+      errors.push({ name, statusCode: e.statusCode, detail: e.body ?? e.message });
+      if (e.statusCode === 404 || e.statusCode === 410) {
+        await deleteSubscription(name);
+        purged.push(name);
+      }
+    }
+  }
 
-  return NextResponse.json({ ok: true, sent, failed, subscribers: subs.length, days, quote });
+  return NextResponse.json({
+    ok: true,
+    sent,
+    failed,
+    purged,
+    errors,
+    subscribers: subs.length,
+    days,
+    quote,
+  });
 }

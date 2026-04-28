@@ -36,8 +36,15 @@ export async function GET(req: NextRequest) {
   });
 
   try {
-    await webpush.sendNotification(sub, payload);
-    return NextResponse.json({ ok: true, sent_to: name, days, quote });
+    await webpush.sendNotification(sub, payload, {
+      TTL: 60 * 60 * 12,
+      urgency: "high",
+      topic: "wedding-daily",
+    });
+    const endpointHost = (() => {
+      try { return new URL((sub as { endpoint: string }).endpoint).host; } catch { return null; }
+    })();
+    return NextResponse.json({ ok: true, sent_to: name, endpointHost, days, quote });
   } catch (err: unknown) {
     const e = err as { statusCode?: number; body?: string; message?: string };
     return NextResponse.json({

@@ -37,3 +37,23 @@ export async function getAllSubscriptions(): Promise<{ name: string; sub: PushSu
   }
   return results;
 }
+
+export async function deleteSubscription(name: string): Promise<boolean> {
+  const key = `PUSH_SUB_${name.toUpperCase().replace(/[^A-Z]/g, "")}`;
+  try {
+    const res = await fetch(
+      `https://api.vercel.com/v9/projects/${PROJECT_ID}/env?teamId=${TEAM_ID}`,
+      { headers: { Authorization: `Bearer ${VERCEL_TOKEN}` } }
+    );
+    const { envs } = await res.json();
+    const entry = (envs as Array<{ key: string; id: string }>).find((e) => e.key === key);
+    if (!entry) return false;
+    await fetch(
+      `https://api.vercel.com/v9/projects/${PROJECT_ID}/env/${entry.id}?teamId=${TEAM_ID}`,
+      { method: "DELETE", headers: { Authorization: `Bearer ${VERCEL_TOKEN}` } }
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}

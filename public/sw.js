@@ -40,6 +40,7 @@ self.addEventListener("push", (e) => {
       badge: data.badge ?? "/icons/icon-96.png",
       tag: "wedding-countdown",
       renotify: true,
+      requireInteraction: true,
       data: { url: data.url ?? "/" },
       vibrate: [200, 100, 200],
     })
