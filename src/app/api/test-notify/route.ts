@@ -39,7 +39,6 @@ export async function GET(req: NextRequest) {
     await webpush.sendNotification(sub, payload, {
       TTL: 60 * 60 * 12,
       urgency: "high",
-      topic: "wedding-daily",
     });
     const endpointHost = (() => {
       try { return new URL((sub as { endpoint: string }).endpoint).host; } catch { return null; }

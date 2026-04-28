@@ -6,7 +6,6 @@ import { getAllSubscriptions, deleteSubscription } from "@/lib/subscriptions";
 const SEND_OPTIONS = {
   TTL: 60 * 60 * 12,
   urgency: "high" as const,
-  topic: "wedding-daily",
 };
 
 export async function GET(req: NextRequest) {
