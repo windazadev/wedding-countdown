@@ -29,13 +29,18 @@ self.addEventListener("fetch", (e) => {
 });
 
 self.addEventListener("push", (e) => {
-  if (!e.data) return;
-  let data;
-  try { data = e.data.json(); } catch { data = { title: "Edwin & Yeimy", body: e.data.text() }; }
+  let data = { title: "Edwin & Yeimy", body: "(push recibido sin payload legible)" };
+  if (e.data) {
+    try { data = e.data.json(); }
+    catch {
+      try { data = { title: "Edwin & Yeimy", body: e.data.text() }; }
+      catch { /* keep default */ }
+    }
+  }
 
   e.waitUntil(
     self.registration.showNotification(data.title ?? "Edwin & Yeimy", {
-      body: data.body,
+      body: data.body ?? "(sin cuerpo)",
       icon: data.icon ?? "/icons/icon-192.png",
       badge: data.badge ?? "/icons/icon-96.png",
       tag: `wedding-${Date.now()}`,
