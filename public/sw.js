@@ -38,9 +38,7 @@ self.addEventListener("push", (e) => {
       body: data.body,
       icon: data.icon ?? "/icons/icon-192.png",
       badge: data.badge ?? "/icons/icon-96.png",
-      tag: "wedding-countdown",
-      renotify: true,
-      requireInteraction: true,
+      tag: `wedding-${Date.now()}`,
       data: { url: data.url ?? "/" },
       vibrate: [200, 100, 200],
     })
