@@ -231,25 +231,34 @@ function Subscribe() {
 
   const go = async (name: string) => {
     if (phase === "loading") return;
-    setWho(name); setPhase("loading");
+    setWho(name); setPhase("loading"); setMsg("");
+    let sub: PushSubscription | null = null;
     try {
       const reg = await navigator.serviceWorker.ready;
-      const sub = (await reg.pushManager.getSubscription())
-        ?? await reg.pushManager.subscribe({
+      sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
         });
-      const r = await fetch("/api/subscribe", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subscription: sub.toJSON(), name }),
-      });
-      if (!r.ok) throw new Error();
+      }
       localStorage.setItem("push_name", name);
       reg.active?.postMessage({ type: "STORE_NAME", name });
       setMsg(`¡Listo, ${name}!`);
       setPhase("done");
-    } catch {
-      setMsg("Activa permisos de notificación e intenta de nuevo.");
+      fetch("/api/subscribe", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscription: sub.toJSON(), name }),
+      }).then(r => {
+        if (!r.ok) console.error("[subscribe] POST failed", r.status);
+      }).catch(e => console.error("[subscribe] POST error", e));
+    } catch (err: unknown) {
+      console.error("[subscribe] failed", err);
+      const e = err as { name?: string; message?: string };
+      const detail = e.name === "NotAllowedError"
+        ? "El navegador bloqueó las notificaciones. Revisa los permisos del sitio."
+        : e.message ?? "Error desconocido";
+      setMsg(detail);
       setPhase("error"); setWho("");
     }
   };
