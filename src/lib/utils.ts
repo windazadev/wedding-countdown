@@ -10,12 +10,12 @@ export const COUNTDOWN_QUOTES: Record<number, string> = {
    8: "Mi hogar no tiene coordenadas físicas. Mi hogar es tu voz, tu paz y la luz inmensa de nuestra hija.",
    7: "Antes de ti, solo sobrevivía al azar. Contigo, descubrí que la magia tiene nombre propio.",
    6: "Eres la melodía exacta que le dio sentido y compás al ruido del mundo. Ya casi llegamos.",
-   5: "Nuestro amor no es casualidad; es la prueba más hermosa de que Dios escuchó las oraciones que ni siquiera sabíamos que estábamos haciendo.",
-   4: "Cuando Dios te puso en mi camino, no solo me entregó una compañera, me dio el milagro de entender su gracia a través de tus ojos.",
-   3: "El hilo que nos une no lo tejimos nosotros; lo trazó la mano de Dios desde antes de que el tiempo existiera.",
-   2: "Que este matrimonio sea un altar, no solo para nosotros, sino un reflejo del amor infinito que Dios ya derramó sobre nuestra familia.",
-   1: "Mañana le juramos a Dios lo que Él ya sabe: que nos creó con el propósito exacto de encontrarnos y hacernos uno solo.",
-   0: "¡Hoy es nuestro día! El amor que construimos llega a su altar. ♡",
+   5: "No fuimos un capricho del azar; eres la respuesta perfecta a las plegarias que mi alma susurraba en silencio.",
+   4: "Al cruzar nuestros destinos, Dios no solo me entregó un refugio; me concedió el milagro de contemplar su gracia a través de tu mirada.",
+   3: "No nos encontramos por accidente; somos el diseño exacto que Dios trazó mucho antes de que el universo aprendiera a contar el tiempo.",
+   2: "Llegaremos al altar no para empezar de cero, sino para consagrar ante Dios el refugio y la familia que su gracia ya nos permitió construir.",
+   1: "Mañana el mundo será testigo de la única certeza que Dios sembró en mi alma: que fui creado con el propósito absoluto de cuidarte la vida entera.",
+   0: "Hoy el tiempo se rinde y la promesa se hace eterna. Caminamos al altar para honrar el milagro más grande que Dios me confió.",
 };
 
 // Returns calendar days remaining based on Colombia date (UTC-5, no DST).
