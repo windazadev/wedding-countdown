@@ -13,7 +13,7 @@ export const COUNTDOWN_QUOTES: Record<number, string> = {
    5: "No fuimos un capricho del azar; eres la respuesta perfecta a las plegarias que mi alma susurraba en silencio.",
    4: "Al cruzar nuestros destinos, Dios no solo me entregó un refugio; me concedió el milagro de contemplar su gracia a través de tu mirada.",
    3: "No nos encontramos por accidente; somos el diseño exacto que Dios trazó mucho antes de que el universo aprendiera a contar el tiempo.",
-   2: "Llegaremos al altar no para empezar de cero, sino para consagrar ante Dios el refugio y la familia que su gracia ya nos permitió construir.",
+   2: "Que el altar sea la primera piedra sobre la cual Dios edifique la familia que empezamos a escribir, con su gracia como nuestro único cimiento.",
    1: "Mañana el mundo será testigo de la única certeza que Dios sembró en mi alma: que fui creado con el propósito absoluto de cuidarte la vida entera.",
    0: "Hoy el tiempo se rinde y la promesa se hace eterna. Caminamos al altar para honrar el milagro más grande que Dios me confió.",
 };
